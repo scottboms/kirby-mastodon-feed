@@ -27,7 +27,7 @@ if (
 	throw new Exception('ISBN Field requires Kirby v4 or v5');
 }
 
-Kirby::plugin( 
+Kirby::plugin(
 	name: 'scottboms/mastodon-feed',
 	info: [
 		'homepage' => 'https://github.com/scottboms/kirby-mastodon-feed'
@@ -40,8 +40,6 @@ Kirby::plugin(
 			'server'				 => null,
 			'cache'					 => true,
 			'cachettl'       => 900,
-			'wrapper'				 => 'div',
-			'class'					 => 'mastodon-feed',
 			'limit'					 => 20,
 			'dateformat'     => 'M d, Y',
 			'excludereplies' => true,

@@ -24,8 +24,6 @@ class Feed {
 			'server'					=> option('scottboms.mastodon.server'),
 			'cache'						=> option('scottboms.mastodon.cache'),
 			'cachettl'        => option('scottboms.mastodon.cachettl', 900), // 15 minutes (60 * 15)
-			'wrapper'					=> option('scottboms.mastodon.wrapper', 'div'),
-			'class'						=> option('scottboms.mastodon.class', 'mastodon-feed'),
 			'limit'						=> option('scottboms.mastodon.limit', 20),
 			'dateformat'			=> option('scottboms.mastodon.dateformat', 'M d, Y'),
 			'excludereplies'	=> option('scottboms.mastodon.excludereplies', true),
@@ -57,7 +55,7 @@ class Feed {
 	{
 		$cache = kirby()->cache('scottboms.mastodon');
 		$cacheKey = 'userid-' . $this->options['username'] . '@' . $this->options['server'];
-		
+
 		// return cached id if available
 		if ($userId = $cache->get($cacheKey)) {
 			return $userId;
@@ -100,18 +98,18 @@ class Feed {
 	/*
 	 * @var String
 	 */
-  public function buildFeedUrl(): string 
+  public function buildFeedUrl(): string
 	{
-		$feedUrl = 'https://' . $this->options['server'] 
-			. '/api/v1/accounts/' . $this->options['userid'] 
+		$feedUrl = 'https://' . $this->options['server']
+			. '/api/v1/accounts/' . $this->options['userid']
 			. '/statuses?exclude_replies=' . ($this->options['excludereplies'] ? 'true' : 'false')
 			. '&only_media=' . ($this->options['onlymedia'] ? 'true' : 'false')
 			. '&limit=' . $this->options['limit'];
-    
+
     return $feedUrl;
   }
 
-  public static function getFeed($feedUrl): array|string 
+  public static function getFeed($feedUrl): array|string
 	{
 		// fetch and decode the json data
 		// see: https://getkirby.com/docs/reference/objects/http/remote/get
@@ -145,7 +143,7 @@ class Feed {
 	/*
 	 * @var Bool
 	 */
-	public static function clearFeedCache(): bool 
+	public static function clearFeedCache(): bool
 	{
 		$cacheKey = static::resolveCacheKey();
 		$cache = kirby()->cache('scottboms.mastodon');
@@ -156,7 +154,7 @@ class Feed {
 	/*
 	 * @var Array
 	 */
-	public function formatFeed(array $feed): array 
+	public function formatFeed(array $feed): array
 	{
 		$feed = array_slice($feed, 0, $this->options['limit']);
 
@@ -202,7 +200,7 @@ class Feed {
 	/*
 	 * @var Array
 	 */
-	public static function formattedFeed(): array 
+	public static function formattedFeed(): array
 	{
 		$instance = new static();
 		$url = $instance->buildFeedUrl();

@@ -1,3 +1,4 @@
+<div class="mastodon-feed">
 <?php foreach(Scottboms\Mastodon\Feed::formattedFeed() as $item): ?>
 
 	<?php if (!empty($item['isNotice'])): ?>
@@ -11,7 +12,7 @@
 	      <img style="width: auto" width="32" height="32" src="<?= esc($item['avatar']) ?>" alt="">
 	      <strong><?= esc($item['author']) ?></strong>
 	      <small>
-					<?= esc($item['date']) ?> • <a href="<?= esc($item['url']) ?>">Source</a> • 
+					<?= esc($item['date']) ?> • <a href="<?= esc($item['url']) ?>">Source</a> •
 
 					<?php if ($item['applicationName']): ?>
 						Posted via
@@ -56,3 +57,4 @@
 
 	<?php endif ?>
 <?php endforeach ?>
+</div>

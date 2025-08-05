@@ -42,8 +42,6 @@ Add the following line to include the built-in snippet to your site. You can cus
 | instance        | `null`          | Yes       | Your Mastodon instance (e.g. mastodon.social)  |
 | cache           | `true`          | No        | Caches data returned from Mastodon API.        |
 | cachettl        | `900`           | No        | Cache timeout - 15 minutes default (900s)      |
-| wrapper         | `div`           | No        | Wrapper element to output around snippet       |
-| class           | `mastodon-feed` | No        | Class name applied to wrapper                  |
 | limit           | `20`            | No        | Number of results to return/display            |
 | dateformat      | `M d, Y`        | No        | Adjust date format per PHP datetime formats    |
 | excludereplies  | `true`          | No        | Exclude replies from results?                  |
@@ -59,8 +57,6 @@ Example Config:
 	  'scottboms.mastodon' => [
       'username'   => 'scottboms',
       'instance'   => 'mastodon.social',
-      'wrapper'    => 'section',
-      'class'      => 'mastodon',
       'dateformat' => 'm-d-Y',
       'cache'      => true,
       'cachettl'   => 300 // 5 minutes
