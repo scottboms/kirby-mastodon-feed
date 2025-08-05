@@ -1,0 +1,28 @@
+{
+  "name": "scottboms/mastodon-feed",
+  "description": "Mastodon Feed plugin for Kirby",
+	"type": "kirby-plugin",
+	"version": "1.0.0",
+	"homepage": "https://github.com/scottboms/kirby-mastodon-feed",
+  "authors": [
+    {
+      "name": "Scott Boms",
+      "email": "plugins@scottboms.com",
+      "homepage": "https://scottboms.com"
+    }
+  ],
+  "license": "MIT",
+
+  "keywords": [
+    "kirby",
+    "kirby-cms",
+    "kirby-plugin",
+    "mastadon"
+  ],
+  "require": {
+    "getkirby/composer-installer": "^1.1"
+  },
+  "extra": {
+    "installer-name": "mastodon-feed"
+  }
+}

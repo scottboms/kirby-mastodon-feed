@@ -1,0 +1,10 @@
+# System files
+# ---------------------
+.DS_Store
+Icon
+node_modules
+package-lock.json
+
+# Lock Files
+# ---------------------
+.lock
