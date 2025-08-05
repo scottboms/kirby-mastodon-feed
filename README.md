@@ -37,7 +37,7 @@ Add the following line to include the built-in snippet to your site. You can cus
 ## Configuration Options
 
 | Property        | Default         | Required? | Description                                    |
---------------------------------------------------------------------------------------------------
+|-----------------|-----------------|-----------|------------------------------------------------|
 | username        | `null`          | Yes       | Your Mastodon username                         |
 | instance        | `null`          | Yes       | Your Mastodon instance (e.g. mastodon.social)  |
 | cache           | `true`          | No        | Caches data returned from Mastodon API.        |
