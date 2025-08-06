@@ -57,13 +57,28 @@ Kirby::plugin(
 					'views' => [
 						'pattern' => 'mastodon-feed',
 						'action'  => function () {
-							return [
-								'component' => 'k-mastodon-feed-view',
-								'props' => [
-									// return data from the Feed class here
-									'status' => 'Panel area loaded',
-								]
-							];
+							try {
+								$feed = new Feed();
+								$items = $feed->get(); // returns array of posts
+
+								return [
+									'component' => 'k-mastodon-feed-view',
+									'props' => [
+										'status' => 'Mastodon feed loaded',
+										'items'  => array_slice($items, 0, 5) // limit to 5 items
+									]
+								];
+							} catch (Exception $e) {
+								return [
+									'component' => 'k-mastodon-feed-view',
+									'props' => [
+										'status' => 'Failed to load Mastodon feed',
+										'error' => $e->getMessage(),
+										'items' => []
+									]
+								];
+							},
+							
 						}
 					]
 				];
