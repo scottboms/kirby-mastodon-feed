@@ -1,4 +1,9 @@
-(function(){"use strict";panel.plugin("scottboms/mastodon-feed",{viewButtons:{mastodoncache:{template:`
+(function(){"use strict";panel.plugin("scottboms/mastodon-feed",{components:{"k-mastodon-feed-view":{props:{status:String},template:`
+				<k-view>
+					<k-header>Mastodon Feed</k-header>
+					<k-text>{{ status }}</k-text>
+				</k-view>
+			`}},viewButtons:{mastodoncache:{template:`
 				<k-button
 					icon="mastodon"
 					variant="filled"

@@ -47,7 +47,28 @@ Kirby::plugin(
 		'api' => [
 			'routes' => require __DIR__ . '/lib/routes.php'
 		],
-
+		'areas' => [
+			'mastodon-feed' => function ($kirby) {
+				return [
+					'label' => 'Mastodon Feed',
+					'icon'  => 'rss',
+					'menu'  => true,
+					'link'  => 'mastodon-feed',
+					'views' => [
+						'pattern' => 'mastodon-feed',
+						'action'  => function () {
+							return [
+								'component' => 'k-mastodon-feed-view',
+								'props' => [
+									// return data from the Feed class here
+									'status' => 'Panel area loaded',
+								]
+							];
+						}
+					]
+				];
+			}
+		],
 		'snippets' => [
 			'mastodon_feed' => __DIR__ . '/snippets/mastodon_feed.php'
 		]
