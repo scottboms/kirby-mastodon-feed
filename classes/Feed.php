@@ -6,9 +6,11 @@ use Exception;
 use Kirby\Data\Json;
 use Kirby\Http\Remote;
 use Kirby\Http\Url;
-use Kirby\Toolkit\Date;
-use Kirby\Toolkit\Str;
 use Kirby\Toolkit\A;
+use Kirby\Toolkit\Date;
+use Kirby\Toolkit\Collection;
+use Kirby\Toolkit\Obj;
+use Kirby\Toolkit\Str;
 
 use function option;
 
@@ -152,7 +154,7 @@ class Feed {
 	}
 
 	/*
-	 * @var Array
+	 * @var Object
 	 */
 	public function formatFeed(array $feed): array
 	{
@@ -162,75 +164,62 @@ class Feed {
 			$isBoost = empty($item['content']) && isset($item['reblog']);
 			$source = $isBoost ? $item['reblog'] : $item;
 
-			return [
-				'id' => $item['id'] ?? null, // use original ID, not reblogged one
-				'url' => $item['url'] ?? null,
-				'originalContent' => $item['content'] ?? '',
-				'rebloggedContent' => $item['reblog']['content'] ?? '',
-				'content' => $item['content'] ?? ($item['reblog']['content'] ?? ''),
-				'author' => $item['account']['display_name'] ?? $item['account']['username'] ?? '',
-				'reblogAuthor' => $isBoost
-				  ? [
-						'name' => $item['reblog']['account']['display_name'] ?? $item['reblog']['account']['username'] ?? '',
-						'url' => $item['reblog']['account']['url'] ?? null,
-						]
-				  : null,
-				'avatar' => $item['account']['avatar_static'] ?? null,
-				'date' => isset($item['created_at'])
-				  ? date($this->options['dateformat'] ?? 'Y-m-d', strtotime($item['created_at']))
-				  : '',
-				'isBoost' => $isBoost,
-				'attribution' => $isBoost
-					? 'Boosted from @' . ($source['account']['acct'] ?? 'unknown')
+			// build media as obj[]
+			$media = array_map(function ($attachment) {
+				return new Obj([
+					'url'         => $attachment['url'] ?? null,
+					'previewUrl'  => $attachment['preview_url'] ?? null,
+					'type'        => $attachment['type'] ?? null,
+					'description' => $attachment['description'] ?? '',
+				]);
+			}, $source['media_attachments'] ?? []);
+
+			// return an obj for the item
+			return new Obj([
+				'id'                 => $item['id'] ?? null,
+				'url'                => $item['url'] ?? null,
+				'author'             => $item['account']['display_name'] ?? $item['account']['username'] ?? '',
+				'username'           => $item['account']['username'] ?? '',
+				'avatar'             => $item['account']['avatar_static'] ?? null,
+				'originalContent'    => $item['content'] ?? '',
+				'rebloggedContent'   => $item['reblog']['content'] ?? '',
+				'content'            => $item['content'] ?? ($item['reblog']['content'] ?? ''),
+				'isBoost'            => $isBoost,
+				'reblogAuthor'       => $isBoost ? new Obj([
+					'name' => $item['reblog']['account']['display_name'] ?? $item['reblog']['account']['username'] ?? '',
+					'url'  => $item['reblog']['account']['url'] ?? null,
+				]) : null,
+				'attribution'        => $isBoost ? 'Boosted from @' . ($source['account']['acct'] ?? 'unknown') : '',
+				'date'               => isset($item['created_at'])
+					? date($this->options['dateformat'] ?? 'Y-m-d', strtotime($item['created_at']))
 					: '',
-				'media' => array_map(function ($attachment) {
-					return [
-						'url'   => $attachment['url'] ?? null,
-						'previewUrl' => $attachment['preview_url'] ?? null,
-						'type'  => $attachment['type'] ?? null,
-						'description' => $attachment['description'] ?? '',
-					];
-				}, $source['media_attachments'] ?? []),
-				'applicationName' => $item['application']['name'] ?? null,
+				'media'              => $media, // array of obj
+				'applicationName'    => $item['application']['name'] ?? null,
 				'applicationWebsite' => $item['application']['website'] ?? null,
-			];
+			]);
 		}, $feed);
 	}
 
 	/*
-	 * @var Array
+	 * @var Object
 	 */
-	public static function formattedFeed(): array
+	public static function formattedFeed(): array|Collection
 	{
 		$instance = new static();
 		$url = $instance->buildFeedUrl();
 		$raw = static::getFeed($url);
 
 		if (!is_array($raw)) {
-			return [];
+			return new Collection([]);
 		}
 
-		$formatted = $instance->formatFeed($raw);
+		$items = $instance->formatFeed($raw);
 
-		// detect empty feed with only_media filter and output message
-		if ($instance->options['onlymedia'] && empty($formatted)) {
-			return [[
-				'content' => 'No media posts found.',
-				'author'  => '',
-				'date'    => '',
-				'url'     => '',
-				'isBoost' => false,
-				'avatar'  => null,
-				'attribution' => '',
-				'reblogAuthor' => null,
-				'media' => [],
-				'originalContent' => '',
-				'rebloggedContent' => '',
-				'isNotice' => true // used to output message in snippet
-			]];
+		if ($instance->options['onlymedia'] && empty($items)) {
+		$items = [/* obj as above */];
 		}
 
-		return $formatted;
+		return new Collection($items);
 	}
 
 }

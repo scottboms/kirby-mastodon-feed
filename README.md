@@ -33,6 +33,16 @@ Add the following line to include the built-in snippet to your site. You can cus
 <?= snippet('mastodon_feed') ?>
 ```
 
+## Template Output
+
+If you want to explore the data returned via the plugin to the snippet or that you can render directly in a template, you can use the following to output the contents of the `$feed` object returned.
+
+```php
+<pre>
+	<?php print_r($items->toArray()); ?>
+</pre>
+```
+
 
 ## Configuration Options
 

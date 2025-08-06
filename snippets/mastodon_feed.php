@@ -1,60 +1,85 @@
+<?php
+	use Scottboms\Mastodon\Feed;
+	$items = Feed::formattedFeed();
+?>
+
+<pre>
+	<?php print_r($items->toArray()); ?>
+</pre>
+
 <div class="mastodon-feed">
-<?php foreach(Scottboms\Mastodon\Feed::formattedFeed() as $item): ?>
+<?php if ($items->isEmpty()): ?>
+	<div class="mastodon__notice">
+  	<p>No posts found.</p>
+	</div>
+<?php else: ?>
+	<!-- output data returned from mastodon api -->
+	<?php foreach ($items as $item): ?>
+	<article class="toot <?= $item->isBoost() ? 'boosted-post' : 'author' ?>">
+		<?php if ($item->isBoost() && $item->reblogAuthor()): ?>
+			<div class="toot__attribution"><a href="<?= $item->reblogAuthor()->url() ?>" rel="nofollow noopener"><?= esc($item->attribution()) ?></a></div>
+		<?php endif ?>
+		<header>
+			<?php if ($item->avatar()): ?>
+			<figure class="toot__avatar">
+				<img width="32" height="32" src="<?= esc($item->avatar()) ?>" alt="<?= $item->author() ?>">
+			</figure>
+			<?php endif ?>
 
-	<?php if (!empty($item['isNotice'])): ?>
-		<!-- output an message if feed returns empty -->
-		<div class="mastodon__notice"><?= esc($item['content']) ?></div>
+			<div class="toot__meta">
+				<?php if (!empty($item->author())): ?>
+					<span class="toot__author"><?= $item->author() ?>
+						<span class="toot__username">@<?= $item->username() ?></span>
+					</span>
+				<?php else: ?>
+					<span class="toot__author">@<?= $item->username() ?></span>
+				<?php endif ?>
+				<?php if ($item->date()): ?>
+					<time class="toot__date"><?= $item->date() ?></time>
+				<?php endif ?>
+			</div>
+		</header>
 
-	<?php else: ?>
-		<!-- output data returned from mastodon api -->
-		<article class="<?= $item['isBoost'] ? 'boost' : 'original' ?>">
-	    <header>
-	      <img style="width: auto" width="32" height="32" src="<?= esc($item['avatar']) ?>" alt="">
-	      <strong><?= esc($item['author']) ?></strong>
-	      <small>
-					<?= esc($item['date']) ?> • <a href="<?= esc($item['url']) ?>">Source</a> •
+		<?php if ($item->originalContent()): ?>
+		<div class="toot__content">
+			<?= $item->originalContent() /* contains mastodon html */ ?>
+		</div>
+		<?php endif ?>
 
-					<?php if ($item['applicationName']): ?>
-						Posted via
-				    <?php if ($item['applicationWebsite']): ?>
-				      <a href="<?= esc($item['applicationWebsite']) ?>" rel="nofollow noopener"><?= esc($item['applicationName']) ?></a>
-				    <?php else: ?>
-				      <?= esc($item['applicationName']) ?>
-				    <?php endif ?>
-					<?php endif ?>
-				</small>
-	    </header>
+		<?php if (!empty($item->rebloggedContent())): ?>
+		<div class="toot__reblog__content">
+			<?= $item->rebloggedContent() ?>
+		</div>
+		<?php endif ?>
 
-	    <?php if (!empty($item['originalContent'])): ?>
-	      <div class="original">
-	        <?= $item['originalContent'] ?>
-	      </div>
-	    <?php endif ?>
-
-			<?php foreach ($item['media'] as $media): ?>
-				<?php if ($media['type'] === 'image'): ?>
-					<img src="<?= esc($media['previewUrl'] ?? $media['url']) ?>" alt="<?= esc($media['description']) ?>">
-				<?php elseif ($media['type'] === 'video' || $media['type'] === 'gifv'): ?>
+		<?php if ($item->media()): ?>
+		<ul class="toot__media">
+			<?php foreach ($item->media() as $m): ?>
+				<?php if($m->type() === "image"): ?>
+				<li>
+					<a href="<?= esc($m->url()) ?>">
+						<img src="<?= esc($m->previewUrl() ?? $m->url()) ?>" alt="<?= esc($m->description()) ?>">
+					</a>
+				</li>
+				<?php elseif($m->type() === 'video' || $m->type() === 'gifv'): ?>
+				<li>
 					<video controls>
-						<source src="<?= esc($media['url']) ?>" type="video/mp4">
+						<source src="<?= esc($m->url()) ?>" type="video/mp4">
 					</video>
+				</li>
 				<?php endif ?>
 			<?php endforeach ?>
+		</ul>
+		<?php endif; ?>
 
-	    <?php if (!empty($item['rebloggedContent'])): ?>
-      <div class="reblog">
-        <?= $item['rebloggedContent'] ?>
+		<footer>
+			<?php if (!empty($item->applicationName())): ?>
+				<p class="toot__app">via <?php if ($item->applicationWebsite()): ?><a href="<?= esc($item->applicationWebsite()) ?>" rel="nofollow noopener"><?= esc($item->applicationName()) ?></a><?php else: ?><?= esc($item->applicationName()) ?><?php endif ?></p>
+			<?php endif ?>
+		</footer>
 
-				<?php if ($item['isBoost']): ?>
-				<footer class="mastodon__boost">
-					<p>Boosted from <a href="<?= esc($item['reblogAuthor']['url']) ?>" rel="nofollow noopener">
-    @<?= esc($item['reblogAuthor']['name']) ?></p>
-				</footer>
-				<?php endif ?>
-	      </div>
-	    <?php endif ?>
-	  </article>
-
-	<?php endif ?>
-<?php endforeach ?>
+	</article>
+	<?php endforeach ?>
+<?php endif ?>
 </div>
+
