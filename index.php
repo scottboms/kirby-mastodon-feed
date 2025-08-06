@@ -5,7 +5,6 @@
 /**
  * Mastodon Feed plugin for Kirby
  *
- * @version 1.0.0
  * @author Scott Boms <plugins@scottboms.com>
  * @copyright Scott Boms <plugins@scottboms.com>
  * @link https://github.com/scottboms/kirby-mastodon-feed
@@ -30,10 +29,10 @@ if (
 Kirby::plugin(
 	name: 'scottboms/mastodon-feed',
 	info: [
-		'homepage' => 'https://github.com/scottboms/kirby-mastodon-feed'
+		'homepage' => 'https://github.com/scottboms/kirby-mastodon-feed',
+		'license' => 'MIT'
 	],
 	version: '1.0.2',
-	license: 'MIT',
 	extends: [
 		'options' => [
 			'username'			 => null,
