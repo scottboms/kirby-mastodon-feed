@@ -2,7 +2,14 @@
   "name": "mastodon-feed",
   "description": "Mastodon Feed plugin for Kirby",
   "author": "Scott Boms <plugins@scottboms.com>",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "kirby-plugin",
-  "license": "MIT"
+  "license": "MIT",
+	"scripts": {
+		"dev": "kirbyup serve src/index.js",
+		"build": "kirbyup src/index.js"
+	},
+	"devDependencies": {
+		"kirbyup": "^3.1.5"
+	}
 }

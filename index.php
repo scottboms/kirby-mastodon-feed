@@ -32,7 +32,7 @@ Kirby::plugin(
 	info: [
 		'homepage' => 'https://github.com/scottboms/kirby-mastodon-feed'
 	],
-	version: '1.0.1',
+	version: '1.0.2',
 	license: 'MIT',
 	extends: [
 		'options' => [
@@ -44,6 +44,9 @@ Kirby::plugin(
 			'dateformat'     => 'M d, Y',
 			'excludereplies' => true,
 			'onlymedia' 		 => false
+		],
+		'api' => [
+			'routes' => require __DIR__ . '/lib/routes.php'
 		],
 
 		'snippets' => [
