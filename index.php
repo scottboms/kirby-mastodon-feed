@@ -12,7 +12,8 @@
 **/
 
 load([
-	'Scottboms\Mastodon\Feed' => __DIR__ . '/classes/Feed.php'
+	'Scottboms\Mastodon\Feed' => __DIR__ . '/classes/Feed.php',
+	'Scottboms\Mastodon\Helpers\CacheKey' => __DIR__ . '/src/Helpers/CacheKey.php',
 ]);
 
 use Scottboms\Mastodon\Feed;
@@ -46,6 +47,11 @@ Kirby::plugin(
 		],
 		'api' => [
 			'routes' => require __DIR__ . '/lib/routes.php'
+		],
+		'autoload' => [
+			'psr-4' => [
+				'Scottboms\\Mastodon\\' => __DIR__ . '/src',
+			]
 		],
 		'areas' => [
 			'mastodon-feed' => function ($kirby) {

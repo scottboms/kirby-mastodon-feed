@@ -11,6 +11,7 @@ use Kirby\Toolkit\Date;
 use Kirby\Toolkit\Collection;
 use Kirby\Toolkit\Obj;
 use Kirby\Toolkit\Str;
+use Scottboms\Mastodon\Helpers\CacheKey;
 
 use function option;
 
@@ -56,7 +57,7 @@ class Feed {
 	protected function getUserId(): ?string
 	{
 		$cache = kirby()->cache('scottboms.mastodon');
-		$cacheKey = 'userid-' . $this->options['username'] . '@' . $this->options['server'];
+		$cacheKey = CacheKey::forUserId($this->options['username'], $this->options['server']);
 
 		// return cached id if available
 		if ($userId = $cache->get($cacheKey)) {
@@ -100,7 +101,7 @@ class Feed {
 	public function getAccountInfo(): array
 	{
 		$cache = kirby()->cache('scottboms.mastodon');
-		$cacheKey = 'account-info-' . $this->options['username'] . '@' . $this->options['server'];
+		$cacheKey = CacheKey::forAccountInfo($this->options['username'], $this->options['server']);
 
 		// try to return cached account info
 		if ($cached = $cache->get($cacheKey)) {
@@ -167,13 +168,19 @@ class Feed {
     return $feedUrl;
   }
 
-  public static function getFeed($feedUrl): array|string
+  public static function getFeed($feedUrl, array $options = []): array|string
 	{
 		// fetch and decode the json data
 		// see: https://getkirby.com/docs/reference/objects/http/remote/get
 		// and https://getkirby.com/docs/reference/objects/http/remote/request
-		$cacheKey = static::resolveCacheKey();
-		$cache = kirby()->cache('scottboms.mastodon');
+
+    $instance = static::build($options);
+    $cache = kirby()->cache('scottboms.mastodon');
+
+    $server = $instance->options['server'];
+    $userId = $instance->options['userid'];
+
+		$cacheKey = CacheKey::forFeed($server, $userId);
 
 		// try to get cached feed
 		if ($cached = $cache->get($cacheKey)) {
@@ -187,7 +194,7 @@ class Feed {
 			$json_data = $request->json();
 
 			// store in cache, e.g., for 15 minutes
-			$ttl = option('scottboms.mastodon.cachettl', 900); // 15 min default
+			$ttl = $instance->options['cachettl'] ?? 900;
 			$cache->set($cacheKey, $json_data, $ttl);
 
 			return $json_data;
@@ -201,10 +208,15 @@ class Feed {
 	/*
 	 * @var Bool
 	 */
-	public static function clearFeedCache(): bool
+	public static function clearFeedCache(array $options = []): bool
 	{
-		$cacheKey = static::resolveCacheKey();
+		$instance = static::build($options);
 		$cache = kirby()->cache('scottboms.mastodon');
+
+		$server = $instance->options['server'];
+		$userId = $instance->options['userid'];
+
+		$cacheKey = CacheKey::forFeed($server, $userId);
 
 		return $cache->remove($cacheKey);
 	}
