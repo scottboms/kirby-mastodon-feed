@@ -14,17 +14,29 @@
 				</k-button-group>
 			</k-header>
 
-			<k-section class="k-mastodon-info-container">
-				<k-box theme="white" class="k-mastodon-avatar">
+			<k-grid class="k-mastodon-info-container" variant="columns" style="">
+				<k-box class="k-mastodon-profile" theme="white" style="--width: 1/4">
 					<k-image :src="account.avatar_static" alt="Avatar" style="width: 70px; height: 70px;" />
+					<div class="k-mastodon-profile">
+						<a href="{{ account.uri }}">
+							<h1>{{ account.display_name }}</h1>
+							<dl>
+								<dt>{{ account.username }}</dt>
+								<dd>{{ account.id }}</dd>
+							</dl>
+						</a>
+					</div>
 				</k-box>
-				<k-stat :label="account.username" :value="account.display_name" icon="account" :link="account.uri" theme="info" size="huge" />
-				<k-box theme="white" class="k-mastodon-note">
+
+				<k-box theme="white" class="k-mastodon-note" style="--width: 1/2">
 					<k-html-field-preview :value="account.note" />
 				</k-box>
-				<k-stat label="Followers" :value="account.followers_count" icon="followers" theme="info" size="huge" class="k-mastodon-stat" />
-				<k-stat label="Following" :value="account.following_count" icon="following" theme="info" class="k-mastodon-stat" />
-			</k-section>
+
+				<k-box theme="white" class="k-mastodon-counts" style="--width: 1/4">
+					<k-stat label="Followers" :value="account.followers_count" icon="followers" theme="info" size="huge" class="k-mastodon-stat" />
+					<k-stat label="Following" :value="account.following_count" icon="following" theme="info" class="k-mastodon-stat" />
+				</k-box>
+			</k-grid>
 
 
 			<k-section>
