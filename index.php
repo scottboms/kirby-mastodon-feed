@@ -52,38 +52,32 @@ Kirby::plugin(
 				return [
 					'label' => 'Mastodon Feed',
 					'icon'  => 'rss',
+					'breadcrumbLabel' => function() {
+						return 'Mastodon Feed';
+					},
 					'menu'  => true,
 					'link'  => 'mastodon-feed',
 					'views' => [
-						'pattern' => 'mastodon-feed',
-						'action'  => function () {
-							try {
-								$feed = new Feed();
-								$items = $feed->get(); // returns array of posts
+						[
+							'pattern' => 'mastodon-feed',
+							'action'  => function () {
+								$user = kirby()->user();
 
+								// you can return data from your Feed class here
 								return [
 									'component' => 'k-mastodon-feed-view',
+									'title' => 'Mastodon Feed',
 									'props' => [
-										'status' => 'Mastodon feed loaded',
-										'items'  => array_slice($items, 0, 5) // limit to 5 items
+										'status' => 'Panel area loaded',
 									]
 								];
-							} catch (Exception $e) {
-								return [
-									'component' => 'k-mastodon-feed-view',
-									'props' => [
-										'status' => 'Failed to load Mastodon feed',
-										'error' => $e->getMessage(),
-										'items' => []
-									]
-								];
-							},
-							
-						}
+							}
+						]
 					]
 				];
 			}
 		],
+
 		'snippets' => [
 			'mastodon_feed' => __DIR__ . '/snippets/mastodon_feed.php'
 		]

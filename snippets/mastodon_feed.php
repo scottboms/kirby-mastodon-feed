@@ -3,9 +3,9 @@
 	$items = Feed::formattedFeed();
 ?>
 
-<pre>
+<!--<pre>
 	<?php print_r($items->toArray()); ?>
-</pre>
+</pre>-->
 
 <div class="mastodon-feed">
 <?php if ($items->isEmpty()): ?>
