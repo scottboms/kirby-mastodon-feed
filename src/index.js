@@ -1,6 +1,9 @@
 import MastodonFeed from "./components/MastodonFeed.vue";
 
+import { icons } from "./icons.js";
+
 panel.plugin("scottboms/mastodon-feed", {
+	icons,
 	components: {
 		'k-mastodon-feed-view': MastodonFeed
 	},

@@ -86,6 +86,62 @@ class Feed {
 	}
 
 	/*
+	 * factory constructor method
+	 * @var Array
+	 */
+	public static function build(array $options = []): self
+	{
+		return new self($options);
+	}
+
+	/*
+	 * @var Array
+	 */
+	public function getAccountInfo(): array
+	{
+		$cache = kirby()->cache('scottboms.mastodon');
+		$cacheKey = 'account-info-' . $this->options['username'] . '@' . $this->options['server'];
+
+		// try to return cached account info
+		if ($cached = $cache->get($cacheKey)) {
+			return $cached;
+		}
+
+		// build the lookup url
+		$acct = $this->options['username'] . '@' . $this->options['server'];
+		$url = 'https://' . $this->options['server'] . '/api/v1/accounts/lookup?acct=' . urlencode($acct);
+
+		$response = Remote::get($url);
+		if ($response->code() !== 200) {
+			throw new Exception('Failed to fetch account info');
+		}
+
+		$json = $response->json();
+
+		if (!is_array($json) || empty($json['id'])) {
+			throw new Exception('Invalid account data received');
+		}
+
+		// info to return from the api
+		$account = [
+			'id'              => $json['id'] ?? null,
+			'username'        => $json['username'] ?? null,
+			'display_name'    => $json['display_name'] ?? null,
+			'avatar_static'   => $json['avatar_static'] ?? null,
+			'uri'             => $json['uri'] ?? null,
+			'note'            => $json['note'] ?? null,
+			'followers_count' => $json['followers_count'] ?? null,
+			'following_count' => $json['following_count'] ?? null,
+		];
+
+		// cache the result
+		$ttl = $this->options['cachettl'] ?? 900;
+		$cache->set($cacheKey, $account, $ttl);
+
+		return $account;
+	}
+
+	/*
 	 * @var String
 	 */
 	protected static function resolveCacheKey(): string
@@ -205,7 +261,7 @@ class Feed {
 	 */
 	public static function formattedFeed(): array|Collection
 	{
-		$instance = new static();
+		$instance = static::build();
 		$url = $instance->buildFeedUrl();
 		$raw = static::getFeed($url);
 

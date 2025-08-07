@@ -23,7 +23,7 @@ if (
 	version_compare(App::version() ?? '0.0.0', '4.0.1', '<') === true ||
 	version_compare(App::version() ?? '0.0.0', '6.0.0', '>=') === true
 ) {
-	throw new Exception('ISBN Field requires Kirby v4 or v5');
+	throw new Exception('Mastodon Feed requires Kirby v4 or v5');
 }
 
 Kirby::plugin(
@@ -32,7 +32,7 @@ Kirby::plugin(
 		'homepage' => 'https://github.com/scottboms/kirby-mastodon-feed',
 		'license' => 'MIT'
 	],
-	version: '1.0.2',
+	version: '1.1.0',
 	extends: [
 		'options' => [
 			'username'			 => null,
@@ -62,6 +62,39 @@ Kirby::plugin(
 							'pattern' => 'mastodon-feed',
 							'action'  => function () {
 								$user = kirby()->user();
+
+								try {
+									$items = Feed::formattedFeed();
+									$feed = Feed::build();
+									$account = $feed->getAccountInfo();
+
+								  if (!$items instanceof Kirby\Toolkit\Collection) {
+								    throw new Exception('Feed did not return a valid collection.');
+								  }
+
+									// debug:
+									//print_r($items->toArray());
+									//die();
+
+								  return [
+								    'component' => 'k-mastodon-feed-view',
+								    'props' => [
+								      'status' => 'Mastodon feed loaded',
+											'account' => $account,
+								      'items'  => $items->limit(5)->values() // limit to 5 items
+								    ]
+								  ];
+
+								} catch (Exception $e) {
+									return [
+										'component' => 'k-mastodon-feed-view',
+										'props' => [
+											'status' => 'Failed to load Mastodon feed',
+											'error' => $e->getMessage(),
+											'items' => []
+										]
+									];
+								}
 
 								// you can return data from your Feed class here
 								return [
