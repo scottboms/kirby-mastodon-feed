@@ -3,6 +3,15 @@
   	<k-panel-inside>
 			<k-header class="k-site-view-header">Mastodon Feed
 				<k-button-group slot="buttons">
+					<k-button 
+						icon="refresh"
+						variant="filled"
+						theme="green-icon"
+						size="sm"
+						text="Refresh Feed"
+						@click="refreshFeedCache"
+					/>
+
 					<k-button
 						icon="mastodon"
 						variant="filled"
@@ -64,12 +73,14 @@
 					</div>
 				</div>
 			</k-section>
+
+			<k-section><pre>{{ items }}</pre></k-section>
   	</k-panel-inside>
 	</div>
 </template>
 
 <script>
-import { clearMastodonCache } from "../helpers.js";
+import { clearMastodonCache, refreshFeed } from "../helpers.js";
 export default {
 	name: 'MastodonFeed',
 	props: {
@@ -138,7 +149,7 @@ export default {
 				if (this.$reload) {
 					await this.$reload(); // panel helper
 				} else if (this.$view?.reload) {
-					await this.$view.reload();   // older/newer variant
+					await this.$view.reload(); // older/newer variant
 				} else {
 					location.reload(); // brute force fallback
 				}
@@ -146,6 +157,25 @@ export default {
 				this.loading = false;
 			}
 		},
+
+		async refreshFeedCache() {
+			console.log('clicked refresh feed cache button');
+			this.loading = true;
+			try {
+				await refreshFeed(this.$api, this.$panel);
+				// refresh the view
+				if (this.$reload) {
+					await this.$reload(); // panel helper
+				} else if (this.$view?.reload) {
+					await this.$view.reload(); // older/newer variant
+				} else {
+					location.reload(); // brute force fallback
+				}
+			} finally {
+				this.loading = false;
+			}
+		},
+
 	}
 }
 </script>

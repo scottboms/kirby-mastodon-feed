@@ -46,17 +46,19 @@ If you want to explore the data returned via the plugin to the snippet or that y
 
 ## Configuration Options
 
-| Property        | Default         | Required? | Description                                    |
-|-----------------|-----------------|-----------|------------------------------------------------|
-| username        | `null`          | Yes       | Your Mastodon username                         |
-| instance        | `null`          | Yes       | Your Mastodon instance (e.g. mastodon.social)  |
-| cache           | `true`          | No        | Caches data returned from Mastodon API.        |
-| cachettl        | `900`           | No        | Cache timeout - 15 minutes default (900s)      |
-| limit           | `20`            | No        | Number of results to return/display            |
-| dateformat      | `M d, Y`        | No        | Adjust date format per PHP datetime formats    |
-| excludereplies  | `true`          | No        | Exclude replies from results?                  |
-| onlymedia       | `false`         | No        | Only show posts with media attachments?        |
-| panel.limit     | `12`            | No        | Number of results to display in the Panel Area |
+| Property                      | Default  | Req? | Description                                    |
+|-------------------------------|----------|------|------------------------------------------------|
+| cache.scottboms.mastodon.type | `file`   | Yes  | Required to enable cache type for the plugin   |
+| username                      | `null`   | Yes  | Your Mastodon username                         |
+| server                        | `null`   | Yes  | Your Mastodon server (e.g. mastodon.social)    |
+| cache                         | `true`   | No   | Caches data returned from Mastodon API.        |
+| cachettl                      | `900`    | No   | Cache timeout - 15 minutes default (900s)      |
+| limit                         | `20`     | No   | Number of results to return/display (max 40)   |
+| dateformat                    | `M d, Y` | No   | Adjust date format per PHP datetime formats    |
+| excludereplies                | `true`   | No   | Exclude replies from results?                  |
+| onlymedia                     | `false`  | No   | Only show posts with media attachments?        |
+| panel.limit                   | `12`     | No   | Number of results to display in the Panel Area |
+
 
 Date formatting follows the [available format options from PHP](https://php.net/manual/en/function.date.php).
 
@@ -65,6 +67,12 @@ Example Config:
 ```php
 <?php
   return [
+    'cache' => [
+      'scottboms.mastodon' => [
+        'type' => 'file',
+      ]
+    ],
+
 	  'scottboms.mastodon' => [
       'username'   => 'scottboms',
       'instance'   => 'mastodon.social',

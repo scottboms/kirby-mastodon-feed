@@ -219,6 +219,31 @@ class Feed {
 	}
 
 	/*
+	 * @var Bool
+	 */
+	public static function refreshFeedCache(array $options = []): bool
+	{
+		$cache = kirby()->cache('scottboms.mastodon');
+		$options = array_merge([
+			'username' => option('scottboms.mastodon.username'),
+			'server'   => option('scottboms.mastodon.server'),
+		], $options);
+
+		if (empty($options['username']) || empty($options['server'])) {
+			return false;
+		}
+
+		$userId = (new self($options))->getUserId();
+
+		if (!$userId) {
+			return false;
+		}
+
+		$cacheKey = CacheKey::forFeed($options['server'], $userId);
+		return $cache->remove($cacheKey);
+	}
+
+	/*
 	 * @var Object
 	 */
 	public function formatFeed(array $feed): array
@@ -241,26 +266,39 @@ class Feed {
 
 			// return an obj for the item
 			return new Obj([
-				'id'                 => $item['id'] ?? null,
-				'url'                => $item['url'] ?? null,
-				'author'             => $item['account']['display_name'] ?? $item['account']['username'] ?? '',
-				'username'           => $item['account']['username'] ?? '',
-				'avatar'             => $item['account']['avatar_static'] ?? null,
-				'originalContent'    => $item['content'] ?? '',
-				'rebloggedContent'   => $item['reblog']['content'] ?? '',
-				'content'            => $item['content'] ?? ($item['reblog']['content'] ?? ''),
-				'isBoost'            => $isBoost,
-				'reblogAuthor'       => $isBoost ? new Obj([
+				'id'                     => $item['id'] ?? null,
+				'uri'                    => $item['uri'] ?? null,
+				'url'                    => $item['url'] ?? null,
+				'author'                 => $item['account']['display_name'] ?? $item['account']['username'] ?? '',
+				'username'               => $item['account']['username'] ?? '',
+				'avatar'                 => $item['account']['avatar_static'] ?? null,
+				'originalContent'        => $item['content'] ?? '',
+				'rebloggedContent'       => $item['reblog']['content'] ?? '',
+				'content'                => $item['content'] ?? ($item['reblog']['content'] ?? ''),
+				'repliesCount'           => $item['replies_count'] ?? 0,
+				'reblogsCount'           => $item['reblogs_count'] ?? 0,
+				'favouritesCount'        => $item['favourites_count'] ?? 0,
+				'favourited'             => $item['favourited'] ?? false,
+				'reblogged'              => $item['reblogged'] ?? false,
+				'bookmarked'             => $item['bookmarked'] ?? false,
+				'sensitive'              => $item['sensitive'] ?? false,
+				'visibility'             => $item['visibility'] ?? 'public',
+				'muted'                  => $item['muted'] ?? false,
+				'language'               => $item['language'] ?? 'en',
+				'inReplyToId'            => $item['in_reply_to_id'] ?? null,
+				'inReplyToAccountId'     => $item['in_reply_to_account_id'] ?? null,
+				'isBoost'                => $isBoost,
+				'reblogAuthor'           => $isBoost ? new Obj([
 					'name' => $item['reblog']['account']['display_name'] ?? $item['reblog']['account']['username'] ?? '',
 					'url'  => $item['reblog']['account']['url'] ?? null,
 				]) : null,
-				'attribution'        => $isBoost ? 'Boosted from @' . ($source['account']['acct'] ?? 'unknown') : '',
-				'date'               => isset($item['created_at'])
+				'attribution'            => $isBoost ? 'Boosted from @' . ($source['account']['acct'] ?? 'unknown') : '',
+				'date'                   => isset($item['created_at'])
 					? date($this->options['dateformat'] ?? 'Y-m-d', strtotime($item['created_at']))
 					: '',
-				'media'              => $media, // array of obj
-				'applicationName'    => $item['application']['name'] ?? null,
-				'applicationWebsite' => $item['application']['website'] ?? null,
+				'media'                  => $media, // array of obj
+				'applicationName'        => $item['application']['name'] ?? null,
+				'applicationWebsite'     => $item['application']['website'] ?? null,
 			]);
 		}, $feed);
 	}
