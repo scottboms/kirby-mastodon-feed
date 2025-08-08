@@ -4,7 +4,7 @@ use Scottboms\Mastodon\Feed;
 
 return [
 	[
-		'pattern' => 'mastodon/clear-cache',
+		'pattern' => 'mastodon-feed/clear-cache',
 		'method'  => 'POST',
 		'auth'    => true, // require a panel-authenticated user
 		'action'  => function () {
@@ -15,10 +15,10 @@ return [
 			}
 
 			try {
-				$ok = Feed::clearFeedCache();
+				$ok = Feed::clearCache();
 				return [
 					'status'  => $ok ? 'ok' : 'noop',
-					'message' => $ok ? 'Feed cache cleared.' : 'Nothing to clear.'
+					'message' => $ok ? 'Mastodon cache cleared.' : 'Nothing to clear.'
 				];
 			} catch (Throwable $e) {
 				// return a clean error to the panel

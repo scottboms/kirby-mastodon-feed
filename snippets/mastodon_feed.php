@@ -3,10 +3,6 @@
 	$items = Feed::formattedFeed();
 ?>
 
-<!--<pre>
-	<?php print_r($items->toArray()); ?>
-</pre>-->
-
 <div class="mastodon-feed">
 <?php if ($items->isEmpty()): ?>
 	<div class="mastodon__notice">

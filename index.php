@@ -13,7 +13,7 @@
 
 load([
 	'Scottboms\Mastodon\Feed' => __DIR__ . '/classes/Feed.php',
-	'Scottboms\Mastodon\Helpers\CacheKey' => __DIR__ . '/src/Helpers/CacheKey.php',
+	'Scottboms\Mastodon\CacheKey' => __DIR__ . '/classes/CacheKey.php',
 ]);
 
 use Scottboms\Mastodon\Feed;
@@ -43,21 +43,24 @@ Kirby::plugin(
 			'limit'					 => 20,
 			'dateformat'     => 'M d, Y',
 			'excludereplies' => true,
-			'onlymedia' 		 => false
+			'onlymedia' 		 => false,
+			'panel' => [
+				'limit' => 12
+			],
 		],
 		'api' => [
 			'routes' => require __DIR__ . '/lib/routes.php'
 		],
 		'autoload' => [
 			'psr-4' => [
-				'Scottboms\\Mastodon\\' => __DIR__ . '/src',
+				'Scottboms\\Mastodon\\' => __DIR__ . '/classes',
 			]
 		],
 		'areas' => [
 			'mastodon-feed' => function ($kirby) {
 				return [
 					'label' => 'Mastodon Feed',
-					'icon'  => 'rss',
+					'icon'  => 'mastodon',
 					'breadcrumbLabel' => function() {
 						return 'Mastodon Feed';
 					},
@@ -78,16 +81,15 @@ Kirby::plugin(
 								    throw new Exception('Feed did not return a valid collection.');
 								  }
 
-									// debug:
-									//print_r($items->toArray());
-									//die();
+									$panelLimit = (int) option('scottboms.mastodon-feed.panel.limit', 12);
+									$panelLimit = max(1, $panelLimit);
 
 								  return [
 								    'component' => 'k-mastodon-feed-view',
 								    'props' => [
 								      'status' => 'Mastodon feed loaded',
 											'account' => $account,
-								      'items'  => $items->limit(5)->values() // limit to 5 items
+								      'items'  => $items->limit($panelLimit)->values(),
 								    ]
 								  ];
 
@@ -102,7 +104,7 @@ Kirby::plugin(
 									];
 								}
 
-								// you can return data from your Feed class here
+								// return data from feed class
 								return [
 									'component' => 'k-mastodon-feed-view',
 									'title' => 'Mastodon Feed',

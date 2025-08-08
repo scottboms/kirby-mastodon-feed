@@ -11,7 +11,7 @@ use Kirby\Toolkit\Date;
 use Kirby\Toolkit\Collection;
 use Kirby\Toolkit\Obj;
 use Kirby\Toolkit\Str;
-use Scottboms\Mastodon\Helpers\CacheKey;
+use Scottboms\Mastodon\CacheKey;
 
 use function option;
 
@@ -87,7 +87,7 @@ class Feed {
 	}
 
 	/*
-	 * factory constructor method
+	 * factory constructor
 	 * @var Array
 	 */
 	public static function build(array $options = []): self
@@ -128,11 +128,14 @@ class Feed {
 			'id'              => $json['id'] ?? null,
 			'username'        => $json['username'] ?? null,
 			'display_name'    => $json['display_name'] ?? null,
+			'server'          => $this->options['server'] ?? null,
 			'avatar_static'   => $json['avatar_static'] ?? null,
-			'uri'             => $json['uri'] ?? null,
+			'url'             => $json['url'] ?? null,
 			'note'            => $json['note'] ?? null,
 			'followers_count' => $json['followers_count'] ?? null,
 			'following_count' => $json['following_count'] ?? null,
+			'statuses_count'  => $json['statuses_count'] ?? null,
+			'last_status_at'  => $json['last_status_at'] ?? null,
 		];
 
 		// cache the result
@@ -208,17 +211,11 @@ class Feed {
 	/*
 	 * @var Bool
 	 */
-	public static function clearFeedCache(array $options = []): bool
+	public static function clearCache(array $options = []): bool
 	{
-		$instance = static::build($options);
 		$cache = kirby()->cache('scottboms.mastodon');
-
-		$server = $instance->options['server'];
-		$userId = $instance->options['userid'];
-
-		$cacheKey = CacheKey::forFeed($server, $userId);
-
-		return $cache->remove($cacheKey);
+		// flush the entire cache
+		return (bool) $cache->flush();
 	}
 
 	/*

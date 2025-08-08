@@ -56,6 +56,7 @@ If you want to explore the data returned via the plugin to the snippet or that y
 | dateformat      | `M d, Y`        | No        | Adjust date format per PHP datetime formats    |
 | excludereplies  | `true`          | No        | Exclude replies from results?                  |
 | onlymedia       | `false`         | No        | Only show posts with media attachments?        |
+| panel.limit     | `12`            | No        | Number of results to display in the Panel Area |
 
 Date formatting follows the [available format options from PHP](https://php.net/manual/en/function.date.php).
 
@@ -71,6 +72,9 @@ Example Config:
       'cache'      => true,
       'cachettl'   => 300 // 5 minutes
       'onlymedia'  => true,
+      'panel'      => [
+        'limit' => 6
+      ]
     ]
   ]
 ```

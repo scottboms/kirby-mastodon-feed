@@ -1,6 +1,6 @@
 <?php
 
-namespace Scottboms\Mastodon\Helpers;
+namespace Scottboms\Mastodon;
 
 use Exception;
 
