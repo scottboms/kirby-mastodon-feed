@@ -16,9 +16,10 @@ panel.plugin("scottboms/mastodon-feed", {
 					variant="filled"
 					theme="purple-icon"
 					size="sm"
+					title="Clear Cache"
+					text="Clear Cache"
 					@click="clearCache"
-				>Clear Cache
-				</k-button>`,
+				/>`,
 			data() {
 				return { loading: false };
 			},

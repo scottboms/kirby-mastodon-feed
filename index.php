@@ -33,7 +33,7 @@ Kirby::plugin(
 		'homepage' => 'https://github.com/scottboms/kirby-mastodon-feed',
 		'license' => 'MIT'
 	],
-	version: '1.1.1',
+	version: '1.1.2',
 	extends: [
 		'options' => [
 			'username'			 => null,

@@ -4,10 +4,29 @@
 			<k-header class="k-site-view-header">Mastodon Feed
 				<k-button-group slot="buttons">
 					<k-button
+						icon="open"
+						variant="filled"
+						size="sm"
+						title="Open Profile"
+						@click="goToProfile"
+					/>
+
+					<k-button
+						icon="refresh"
+						variant="filled"
+						theme="blue-icon"
+						size="sm"
+						title="Refresh Feed"
+						text="Refresh Feed"
+						@click="refreshFeedCache"
+					/>
+
+					<k-button
 						icon="mastodon"
 						variant="filled"
 						theme="purple-icon"
 						size="sm"
+						title="Clear Cache"
 						text="Clear Cache"
 						@click="clearCache"
 					/>
@@ -57,8 +76,17 @@
 
 							<div v-if="originalStatus(item)" class="k-item-content">
 								<div class="k-item-title" v-html="originalStatus(item).content" />
-								<p class="k-item-info">{{ formatDate(originalStatus(item).created_at || item.date) }}</p>
+								<div class="k-mastodon-meta k-item-info">
+									{{ formatDate(originalStatus(item).created_at || item.date) }}
+									<span v-if="item.applicationName">• {{ item.applicationName }}</span>
+								</div>
 							</div>
+
+							<k-bar class="k-mastodon-item-details">
+								<k-box icon="replies" style="--columns: 2; gap: 0.25rem; justify-content: center" :text="item.repliesCount" />
+								<k-box icon="star" style="--columns: 2; gap: 0.25rem; justify-content: center" :text="item.favouritesCount" />
+								<k-box icon="boost" style="--columns: 2; gap: 0.25rem; justify-content: center" :text="item.reblogsCount" />
+							</k-bar>
 
 						</div>
 					</div>
@@ -69,7 +97,7 @@
 </template>
 
 <script>
-import { clearMastodonCache } from "../helpers.js";
+import { clearMastodonCache, refreshFeed } from "../helpers.js";
 export default {
 	name: 'MastodonFeed',
 	props: {
@@ -130,6 +158,18 @@ export default {
 			};
 		},
 
+		async goToProfile() {
+			if (!this.account.url) {
+				this.$panel.notification.error('No Mastodon profile URL found');
+				return;
+			}
+
+			const url = this.account.url.startsWith('http')
+				? this.account.url
+				: `https://${this.account.url}`;
+			window.open(url, '_blank');
+		},
+
 		async clearCache() {
 			this.loading = true;
 			try {
@@ -138,7 +178,7 @@ export default {
 				if (this.$reload) {
 					await this.$reload(); // panel helper
 				} else if (this.$view?.reload) {
-					await this.$view.reload();   // older/newer variant
+					await this.$view.reload(); // older/newer variant
 				} else {
 					location.reload(); // brute force fallback
 				}
@@ -146,6 +186,25 @@ export default {
 				this.loading = false;
 			}
 		},
+
+		async refreshFeedCache() {
+			console.log('clicked refresh feed cache button');
+			this.loading = true;
+			try {
+				await refreshFeed(this.$api, this.$panel);
+				// refresh the view
+				if (this.$reload) {
+					await this.$reload(); // panel helper
+				} else if (this.$view?.reload) {
+					await this.$view.reload(); // older/newer variant
+				} else {
+					location.reload(); // brute force fallback
+				}
+			} finally {
+				this.loading = false;
+			}
+		},
+
 	}
 }
 </script>
@@ -176,9 +235,6 @@ export default {
 	margin-top: .2rem !important;
 }
 
-.k-mastodon-toots {
-}
-
 .k-mastodon-media {
   display: block;
   margin-bottom: .5rem;
@@ -186,11 +242,6 @@ export default {
 }
 
 .k-mastodon-toot {
-	background: var(--item-color-back);
-	border-radius: var(--rounded);
-	box-shadow: var(--item-shadow);
-	min-height: var(--item-height);
-	container-type: inline-size;
 	position: relative;
 }
 
@@ -211,5 +262,24 @@ export default {
 	hyphens: manual;
 	inline-size: 100%;
 	overflow-wrap: break-word;
+}
+
+.k-mastodon-toot .k-item-content p {
+	margin-bottom: var(--spacing-3);
+}
+
+.k-mastodon-item-details {
+	border-top: 1px solid light-dark(var(--color-gray-250), var(--color-gray-800));
+	gap: 0.1rem;
+	margin-top: var(--spacing-8);
+	padding: var(--spacing-6) var(--spacing-2);
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
+.k-mastodon-meta {
+	padding-top: var(--spacing-1);
+	padding-bottom: 4rem;
 }
 </style>
