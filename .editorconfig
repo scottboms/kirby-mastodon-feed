@@ -1,4 +1,4 @@
-[*.{css,js,json,html,php,html,md}]
+[*.{css,js,json,html,php,html,md,.vue}]
 charset = utf-8
 indent_style = tab
 indent_size = 2

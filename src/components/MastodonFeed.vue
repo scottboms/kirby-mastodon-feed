@@ -69,6 +69,12 @@
 								<p class="k-item-info">{{ formatDate(originalStatus(item).created_at || item.date) }}</p>
 							</div>
 
+							<k-bar class="k-mastodon-item-details">
+								<k-box icon="replies" style="--columns: 1; gap: 0.25rem" :text="item.repliesCount" />
+								<k-box icon="boosts" style="--columns: 1; gap: 0.25rem" :text="item.reblogsCount" />
+								<k-box icon="heart-filled" style="--columns: 1; gap: 0.25rem" :text="item.favouritesCount" />
+							</k-bar>
+
 						</div>
 					</div>
 				</div>
@@ -206,9 +212,6 @@ export default {
 	margin-top: .2rem !important;
 }
 
-.k-mastodon-toots {
-}
-
 .k-mastodon-media {
   display: block;
   margin-bottom: .5rem;
@@ -221,7 +224,6 @@ export default {
 	box-shadow: var(--item-shadow);
 	min-height: var(--item-height);
 	container-type: inline-size;
-	position: relative;
 }
 
 .k-mastodon-boost-header {
@@ -241,5 +243,12 @@ export default {
 	hyphens: manual;
 	inline-size: 100%;
 	overflow-wrap: break-word;
+}
+
+.k-mastodon-item-details {
+	border-top: 1px solid light-dark(var(--color-gray-250), var(--color-gray-800));
+	margin-top: var(--spacing-8);
+	padding: var(--spacing-6) var(--spacing-6);
+	width: 100%;
 }
 </style>
