@@ -4,10 +4,19 @@
 			<k-header class="k-site-view-header">Mastodon Feed
 				<k-button-group slot="buttons">
 					<k-button
+						icon="open"
+						variant="filled"
+						size="sm"
+						title="Open Profile"
+						@click="goToProfile"
+					/>
+
+					<k-button
 						icon="refresh"
 						variant="filled"
 						theme="blue-icon"
 						size="sm"
+						title="Refresh Feed"
 						text="Refresh Feed"
 						@click="refreshFeedCache"
 					/>
@@ -17,6 +26,7 @@
 						variant="filled"
 						theme="purple-icon"
 						size="sm"
+						title="Clear Cache"
 						text="Clear Cache"
 						@click="clearCache"
 					/>
@@ -146,6 +156,18 @@ export default {
 				src,
 				alt: pick.description || pick.alt || 'Mastodon media'
 			};
+		},
+
+		async goToProfile() {
+			if (!this.account.url) {
+				this.$panel.notification.error('No Mastodon profile URL found');
+				return;
+			}
+
+			const url = this.account.url.startsWith('http')
+				? this.account.url
+				: `https://${this.account.url}`;
+			window.open(url, '_blank');
 		},
 
 		async clearCache() {
