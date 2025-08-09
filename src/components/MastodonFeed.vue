@@ -3,10 +3,10 @@
   	<k-panel-inside>
 			<k-header class="k-site-view-header">Mastodon Feed
 				<k-button-group slot="buttons">
-					<k-button 
+					<k-button
 						icon="refresh"
 						variant="filled"
-						theme="green-icon"
+						theme="blue-icon"
 						size="sm"
 						text="Refresh Feed"
 						@click="refreshFeedCache"
@@ -66,21 +66,22 @@
 
 							<div v-if="originalStatus(item)" class="k-item-content">
 								<div class="k-item-title" v-html="originalStatus(item).content" />
-								<p class="k-item-info">{{ formatDate(originalStatus(item).created_at || item.date) }}</p>
+								<div class="k-mastodon-meta k-item-info">
+									{{ formatDate(originalStatus(item).created_at || item.date) }}
+									<span v-if="item.applicationName">• {{ item.applicationName }}</span>
+								</div>
 							</div>
 
 							<k-bar class="k-mastodon-item-details">
-								<k-box icon="replies" style="--columns: 1; gap: 0.25rem" :text="item.repliesCount" />
-								<k-box icon="boosts" style="--columns: 1; gap: 0.25rem" :text="item.reblogsCount" />
-								<k-box icon="heart-filled" style="--columns: 1; gap: 0.25rem" :text="item.favouritesCount" />
+								<k-box icon="replies" style="--columns: 2; gap: 0.25rem; justify-content: center" :text="item.repliesCount" />
+								<k-box icon="star" style="--columns: 2; gap: 0.25rem; justify-content: center" :text="item.favouritesCount" />
+								<k-box icon="boost" style="--columns: 2; gap: 0.25rem; justify-content: center" :text="item.reblogsCount" />
 							</k-bar>
 
 						</div>
 					</div>
 				</div>
 			</k-section>
-
-			<k-section><pre>{{ items }}</pre></k-section>
   	</k-panel-inside>
 	</div>
 </template>
@@ -219,11 +220,7 @@ export default {
 }
 
 .k-mastodon-toot {
-	background: var(--item-color-back);
-	border-radius: var(--rounded);
-	box-shadow: var(--item-shadow);
-	min-height: var(--item-height);
-	container-type: inline-size;
+	position: relative;
 }
 
 .k-mastodon-boost-header {
@@ -245,10 +242,22 @@ export default {
 	overflow-wrap: break-word;
 }
 
+.k-mastodon-toot .k-item-content p {
+	margin-bottom: var(--spacing-3);
+}
+
 .k-mastodon-item-details {
 	border-top: 1px solid light-dark(var(--color-gray-250), var(--color-gray-800));
+	gap: 0.1rem;
 	margin-top: var(--spacing-8);
-	padding: var(--spacing-6) var(--spacing-6);
+	padding: var(--spacing-6) var(--spacing-2);
+	position: absolute;
+	bottom: 0;
 	width: 100%;
+}
+
+.k-mastodon-meta {
+	padding-top: var(--spacing-1);
+	padding-bottom: 4rem;
 }
 </style>
