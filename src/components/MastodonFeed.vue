@@ -18,6 +18,7 @@
 						size="sm"
 						title="Refresh Feed"
 						text="Refresh Feed"
+						responsive="true"
 						@click="refreshFeedCache"
 					/>
 
@@ -28,6 +29,7 @@
 						size="sm"
 						title="Clear Cache"
 						text="Clear Cache"
+						responsive="true"
 						@click="clearCache"
 					/>
 				</k-button-group>
@@ -92,6 +94,13 @@
 					</div>
 				</div>
 			</k-section>
+
+			<k-line-field />
+
+			<k-section class="k-mastodon-stats" v-if="account.created_at">
+				<k-stats :reports="[{ label: 'Account Created', value: account.created_at, icon: 'clock' }, { label: 'Account ID', value: account.id, icon: 'user' }, { label: 'Visibility', value: account.locked, icon: 'shield' }, { label: 'Indexing', value: account.indexable, icon: 'search' }]" size="small" class="k-mastodon-info-reports" />
+			</k-section>
+
   	</k-panel-inside>
 	</div>
 </template>

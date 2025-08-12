@@ -126,6 +126,9 @@ class Feed {
 		// info to return from the api
 		$account = [
 			'id'              => $json['id'] ?? null,
+			'created_at'      => $json['created_at']
+				? date($this->options['dateformat'] ?? 'Y-m-d', strtotime($json['created_at']))
+				: '',
 			'username'        => $json['username'] ?? null,
 			'display_name'    => $json['display_name'] ?? null,
 			'server'          => $this->options['server'] ?? null,
@@ -136,6 +139,14 @@ class Feed {
 			'following_count' => $json['following_count'] ?? null,
 			'statuses_count'  => $json['statuses_count'] ?? null,
 			'last_status_at'  => $json['last_status_at'] ?? null,
+
+			'indexable'          => isset($json['indexable'])
+				? ($json['indexable'] ? 'Active' : 'Inactive')
+				: null,
+
+			'locked'          => isset($json['locked'])
+				? ($json['locked'] ? 'Private' : 'Public')
+				: null,
 		];
 
 		// cache the result
