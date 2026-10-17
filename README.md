@@ -90,7 +90,7 @@ Example Config:
 
 ## Panel View Button
 
-The plugin includes a custom [Panel View Button](https://getkirby.com/releases/5/view-buttons) for Kirby 5.x to manually clear the Mastodon cache file which can be added to the site or a page blueprint using the `buttons` [option](https://getkirby.com/docs/reference/panel/blueprints/page#view-buttons).
+The plugin includes a custom [Panel View Button](https://getkirby.com/releases/5/view-buttons) for Kirby to manually clear the Mastodon cache file which can be added to the site or a page blueprint using the `buttons` [option](https://getkirby.com/docs/reference/panel/blueprints/page#view-buttons).
 
 
 ```yml
@@ -101,8 +101,7 @@ buttons:
 
 ## Compatibility
 
-* Kirby 4.x
-* Kirby 5.x
+* Kirby 6.x
 
 
 ## Disclaimer

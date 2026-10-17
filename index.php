@@ -21,10 +21,10 @@ use Kirby\Cms\App;
 
 // shamelessly borrowed from distantnative/retour-for-kirby
 if (
-	version_compare(App::version() ?? '0.0.0', '4.0.1', '<') === true ||
-	version_compare(App::version() ?? '0.0.0', '6.0.0', '>=') === true
+	version_compare(App::version() ?? '0.0.0', '6.0.0', '<') === true ||
+	version_compare(App::version() ?? '0.0.0', '7.0.0', '>=') === true
 ) {
-	throw new Exception('Mastodon Feed requires Kirby v4 or v5');
+	throw new Exception('Mastodon Feed requires Kirby v6');
 }
 
 Kirby::plugin(
@@ -33,7 +33,7 @@ Kirby::plugin(
 		'homepage' => 'https://github.com/scottboms/kirby-mastodon-feed',
 		'license' => 'MIT'
 	],
-	version: '1.1.3',
+	version: '6.0.0',
 	extends: [
 		'options' => [
 			'username'			 => null,

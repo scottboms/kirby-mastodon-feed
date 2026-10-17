@@ -2,7 +2,7 @@
   "name": "scottboms/mastodon-feed",
   "description": "Mastodon Feed plugin for Kirby",
 	"type": "kirby-plugin",
-	"version": "1.0.0",
+	"version": "6.0.0",
 	"homepage": "https://github.com/scottboms/kirby-mastodon-feed",
   "authors": [
     {
@@ -15,9 +15,11 @@
 
   "keywords": [
     "kirby",
+		"kirby6",
     "kirby-cms",
     "kirby-plugin",
-    "mastadon"
+		"kirby6-plugin",
+    "mastodon"
   ],
   "require": {
     "getkirby/composer-installer": "^1.1"
