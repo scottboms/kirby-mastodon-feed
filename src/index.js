@@ -18,14 +18,18 @@ panel.plugin("scottboms/mastodon-feed", {
 					size="sm"
 					title="Clear Cache"
 					text="Clear Cache"
+					:loading="loading"
 					@click="clearCache"
 				/>`,
+
 			data() {
 				return { loading: false };
 			},
+
 			methods: {
 				async clearCache() {
 					this.loading = true;
+
 					try {
 						await clearMastodonCache(this.$api, this.$panel);
 					} finally {

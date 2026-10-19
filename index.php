@@ -17,23 +17,25 @@ load([
 ]);
 
 use Scottboms\Mastodon\Feed;
-use Kirby\Cms\App;
+use Kirby\Cms\App as Kirby;
+use Kirby\Toolkit\Collection;
 
-// shamelessly borrowed from distantnative/retour-for-kirby
+$version = Kirby::version() ?? '0.0.0';
 if (
-	version_compare(App::version() ?? '0.0.0', '6.0.0', '<') === true ||
-	version_compare(App::version() ?? '0.0.0', '7.0.0', '>=') === true
+  version_compare($version, '6.0.0-beta.1', '<') ||
+  version_compare($version, '7.0.0', '>=')
 ) {
-	throw new Exception('Mastodon Feed requires Kirby v6');
+  throw new Exception('Mastodon Feed requires Kirby 6');
 }
 
-Kirby::plugin(
-	name: 'scottboms/mastodon-feed',
+Kirby::plugin('scottboms/mastodon-feed',
 	info: [
 		'homepage' => 'https://github.com/scottboms/kirby-mastodon-feed',
-		'license' => 'MIT'
+		'license'  => 'MIT',
+		'version'  => '6.0.0',
+		'authors'  => [[ 'name' => 'Scott Boms' ]]
 	],
-	version: '6.0.0',
+
 	extends: [
 		'options' => [
 			'username'			 => null,
@@ -74,32 +76,45 @@ Kirby::plugin(
 
 								try {
 									$items = Feed::formattedFeed();
+
+									// error_log('[Mastodon] Collection count: ' . $items->count());
+									// error_log('[Mastodon] First item: ' . print_r($items->first(), true));
+
 									$feed = Feed::build();
 									$account = $feed->getAccountInfo();
 
-								  if (!$items instanceof Kirby\Toolkit\Collection) {
-								    throw new Exception('Feed did not return a valid collection.');
-								  }
+									$panelLimit = max(
+										1,
+										(int) option('scottboms.mastodon-feed.panel.limit', 12)
+									);
 
-									$panelLimit = (int) option('scottboms.mastodon-feed.panel.limit', 12);
-									$panelLimit = max(1, $panelLimit);
+									// Convert the collection to a plain array of associative arrays
+									$panelItems = [];
 
-								  return [
-								    'component' => 'k-mastodon-feed-view',
-								    'props' => [
-								      'status' => 'Mastodon feed loaded',
+									foreach ($items->limit($panelLimit) as $item) {
+										$panelItems[] = $item->toArray();
+									}
+
+									//error_log('[Mastodon] Panel item count: ' . count($panelItems));
+
+									return [
+										'component' => 'k-mastodon-feed-view',
+										'title' => 'Mastodon Feed',
+										'props' => [
+											'status'  => 'Mastodon feed loaded',
 											'account' => $account,
-								      'items'  => $items->limit($panelLimit)->values(),
-								    ]
-								  ];
+											'items'   => $panelItems,
+										]
+									];
 
 								} catch (Exception $e) {
 									return [
 										'component' => 'k-mastodon-feed-view',
+										'title' => 'Mastodon Feed',
 										'props' => [
-											'status' => 'Failed to load Mastodon feed',
-											'error' => $e->getMessage(),
-											'items' => []
+											'status'  => 'Mastodon feed loaded',
+											'account' => $account,
+											'items'   => $panelItems,
 										]
 									];
 								}

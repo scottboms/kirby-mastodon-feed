@@ -22,6 +22,8 @@
     "mastodon"
   ],
   "require": {
+		"php": ">=8.3.0 <8.6.0",
+		"getkirby/cms": "^6.0",
     "getkirby/composer-installer": "^1.1"
   },
   "extra": {

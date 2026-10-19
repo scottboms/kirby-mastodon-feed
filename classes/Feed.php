@@ -23,14 +23,14 @@ class Feed {
 
 	private function __construct(array $options = []) {
 		$defaults = [
-			'username'				=> option('scottboms.mastodon.username'),
-			'server'					=> option('scottboms.mastodon.server'),
-			'cache'						=> option('scottboms.mastodon.cache'),
-			'cachettl'        => option('scottboms.mastodon.cachettl', 900), // 15 minutes (60 * 15)
-			'limit'						=> option('scottboms.mastodon.limit', 20),
-			'dateformat'			=> option('scottboms.mastodon.dateformat', 'M d, Y'),
-			'excludereplies'	=> option('scottboms.mastodon.excludereplies', true),
-			'onlymedia'				=> option('scottboms.mastodon.onlymedia', false),
+			'username'				=> option('scottboms.mastodon-feed.username'),
+			'server'					=> option('scottboms.mastodon-feed.server'),
+			'cache'						=> option('scottboms.mastodon-feed.cache'),
+			'cachettl'        => option('scottboms.mastodon-feed.cachettl', 900), // 15 minutes (60 * 15)
+			'limit'						=> option('scottboms.mastodon-feed.limit', 20),
+			'dateformat'			=> option('scottboms.mastodon-feed.dateformat', 'M d, Y'),
+			'excludereplies'	=> option('scottboms.mastodon-feed.excludereplies', true),
+			'onlymedia'				=> option('scottboms.mastodon-feed.onlymedia', false),
 		];
 
 		$this->options = array_merge($defaults, $options);
@@ -56,7 +56,7 @@ class Feed {
 	 */
 	protected function getUserId(): ?string
 	{
-		$cache = kirby()->cache('scottboms.mastodon');
+		$cache = kirby()->cache('scottboms.mastodon-feed');
 		$cacheKey = CacheKey::forUserId($this->options['username'], $this->options['server']);
 
 		// return cached id if available
@@ -189,7 +189,7 @@ class Feed {
 		// and https://getkirby.com/docs/reference/objects/http/remote/request
 
     $instance = static::build($options);
-    $cache = kirby()->cache('scottboms.mastodon');
+    $cache = kirby()->cache('scottboms.mastodon-feed');
 
     $server = $instance->options['server'];
     $userId = $instance->options['userid'];
@@ -213,7 +213,10 @@ class Feed {
 
 			return $json_data;
 		} else {
-			return "Feed error returned. Please wait and try again later.";
+			throw new Exception(
+			'Mastodon API request failed with HTTP status ' .
+				$request->code()
+			);
 		}
 
     return $json_data;
@@ -224,7 +227,7 @@ class Feed {
 	 */
 	public static function clearCache(array $options = []): bool
 	{
-		$cache = kirby()->cache('scottboms.mastodon');
+		$cache = kirby()->cache('scottboms.mastodon-feed');
 		// flush the entire cache
 		return (bool) $cache->flush();
 	}
@@ -234,10 +237,10 @@ class Feed {
 	 */
 	public static function refreshFeedCache(array $options = []): bool
 	{
-		$cache = kirby()->cache('scottboms.mastodon');
+		$cache = kirby()->cache('scottboms.mastodon-feed');
 		$options = array_merge([
-			'username' => option('scottboms.mastodon.username'),
-			'server'   => option('scottboms.mastodon.server'),
+			'username' => option('scottboms.mastodon-feed.username'),
+			'server'   => option('scottboms.mastodon-feed.server'),
 		], $options);
 
 		if (empty($options['username']) || empty($options['server'])) {
@@ -324,14 +327,13 @@ class Feed {
 		$raw = static::getFeed($url);
 
 		if (!is_array($raw)) {
-			return new Collection([]);
+			throw new Exception(
+				'Mastodon API returned unexpected data: ' .
+					get_debug_type($raw)
+			);
 		}
 
 		$items = $instance->formatFeed($raw);
-
-		if ($instance->options['onlymedia'] && empty($items)) {
-		$items = [/* obj as above */];
-		}
 
 		return new Collection($items);
 	}
