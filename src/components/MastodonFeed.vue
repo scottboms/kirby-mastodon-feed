@@ -304,6 +304,9 @@ export default {
 }
 
 .k-mastodon-toot {
+	background: light-dark(var(--color-white), var(--color-gray-800));
+	border-radius: var(--rounded);
+	box-shadow: var(--shadow);
 	position: relative;
 }
 
@@ -331,7 +334,7 @@ export default {
 }
 
 .k-mastodon-item-details {
-	border-top: 1px solid light-dark(var(--color-gray-250), var(--color-gray-800));
+	border-top: 1px solid light-dark(var(--color-gray-300), var(--color-gray-900));
 	gap: 0.1rem;
 	margin-top: var(--spacing-8);
 	padding: var(--spacing-6) var(--spacing-2);
