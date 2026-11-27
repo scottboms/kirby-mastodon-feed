@@ -32,7 +32,7 @@ Kirby::plugin('scottboms/mastodon-feed',
 	info: [
 		'homepage' => 'https://github.com/scottboms/kirby-mastodon-feed',
 		'license'  => 'MIT',
-		'version'  => '6.0.0',
+		'version'  => '6.0.1',
 		'authors'  => [[ 'name' => 'Scott Boms' ]]
 	],
 
